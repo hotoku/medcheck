@@ -65,5 +65,24 @@ localStorage のキーは `"medicationData"`。`App.tsx` の `useEffect` が `da
 
 ## Git
 
-- リモートは未設定。`main` に直接コミットしている。
+**`main` に直接コミットしない。作業ごとに必ずトピックブランチを切る。**
+
+```bash
+git switch main
+git switch -c fix/a-1-selected-date-highlight   # ブランチ名は下記の規則で
+# ... 作業 ...
+npm run build && npm run lint                    # 通してからコミット
+git switch main
+git merge --no-ff fix/a-1-selected-date-highlight
+git branch -d fix/a-1-selected-date-highlight
+```
+
+- **ブランチ名**: `<種別>/<課題ID>-<英小文字の短い説明>`
+  例: `fix/a-1-selected-date-highlight`、`chore/c-1-remove-unused-files`。
+  種別は `fix` / `feat` / `chore` / `docs`。TASKS.md に無い作業は課題IDを省いてよい。
+- **1 ブランチ 1 課題**。複数の課題をまとめない。
+- **マージは `--no-ff`** で行い、トピックブランチの単位を履歴に残す。マージ後はブランチを削除する。
+- TASKS.md の更新も同じブランチに含める。完了記録にはコミットハッシュを書くため、
+  修正をコミットした後に TASKS.md を更新する 2 コミット構成になる。
 - コミットメッセージは日本語で書く。
+- リモートは未設定。将来 GitHub に置く場合はこのフローが PR ベースに変わる。
