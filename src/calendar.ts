@@ -1,37 +1,29 @@
-// カレンダーに並べる 1 マス分
-export interface CalendarDay {
-  date: Date;
-  isCurrentMonth: boolean;
+// 週の始まりは日曜。時刻を落としてその日の 0 時にそろえる。
+export function startOfWeek(date: Date): Date {
+  return new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate() - date.getDay(),
+  );
 }
 
-// 指定した月のカレンダーに並べる日付を作る。
-// 日曜始まりの 6 週間分（42 マス）を返し、前後の余りは隣の月の日で埋める。
-export function buildCalendarDays(currentDate: Date): CalendarDay[] {
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-  const lastDay = new Date(year, month + 1, 0);
-  const days: CalendarDay[] = [];
+// 日数を足した日付を返す。月・年をまたぐ場合も Date が繰り上げてくれる。
+export function addDays(date: Date, days: number): Date {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
+}
 
-  // 前月の埋め合わせ
-  const startDayOfWeek = new Date(year, month, 1).getDay();
-  const prevMonthLastDay = new Date(year, month, 0).getDate();
-  for (let i = startDayOfWeek - 1; i >= 0; i--) {
-    days.push({
-      date: new Date(year, month - 1, prevMonthLastDay - i),
-      isCurrentMonth: false,
-    });
-  }
+// anchorDate を含む週と、その 1 つ前の週。あわせて 14 日分を日曜始まりで返す。
+export function buildTwoWeekDays(anchorDate: Date): Date[] {
+  const start = addDays(startOfWeek(anchorDate), -7);
+  return Array.from({ length: 14 }, (_, i) => addDays(start, i));
+}
 
-  // 当月
-  for (let day = 1; day <= lastDay.getDate(); day++) {
-    days.push({ date: new Date(year, month, day), isCurrentMonth: true });
-  }
-
-  // 翌月の埋め合わせ（6 週分に満たない分）
-  const remainingDays = 42 - days.length;
-  for (let day = 1; day <= remainingDays; day++) {
-    days.push({ date: new Date(year, month + 1, day), isCurrentMonth: false });
-  }
-
-  return days;
+// 「2026年8月30日 〜 9月12日」。年をまたぐときだけ末尾にも年を出す。
+export function formatDateRange(start: Date, end: Date): string {
+  const head = `${start.getFullYear()}年${start.getMonth() + 1}月${start.getDate()}日`;
+  const tail =
+    end.getFullYear() === start.getFullYear()
+      ? `${end.getMonth() + 1}月${end.getDate()}日`
+      : `${end.getFullYear()}年${end.getMonth() + 1}月${end.getDate()}日`;
+  return `${head} 〜 ${tail}`;
 }

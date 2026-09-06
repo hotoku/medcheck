@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Calendar } from "./components/Calendar";
 import { MedicationRecord } from "./components/MedicationRecord";
+import { addDays } from "./calendar";
 import type { MedicationData } from "./types";
 
 const STORAGE_KEY = "medicationData";
@@ -23,7 +24,8 @@ function saveData(data: MedicationData) {
 }
 
 function App() {
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  // 表示している 2 週間の基準日。この日を含む週と、その前の週を出す。
+  const [anchorDate, setAnchorDate] = useState<Date>(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [data, setData] = useState<MedicationData>(loadData);
 
@@ -44,32 +46,12 @@ function App() {
     saveData(next);
   };
 
-  // 表示中の月以外の日が選ばれたら、その月に移動する
-  const handleDateSelect = (date: Date) => {
-    setSelectedDate(date);
-    if (
-      date.getFullYear() !== currentDate.getFullYear() ||
-      date.getMonth() !== currentDate.getMonth()
-    ) {
-      setCurrentDate(new Date(date.getFullYear(), date.getMonth()));
-    }
-  };
+  const goToPreviousWeek = () => setAnchorDate(addDays(anchorDate, -7));
+  const goToNextWeek = () => setAnchorDate(addDays(anchorDate, 7));
 
-  const goToPreviousMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1),
-    );
-  };
-
-  const goToNextMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1),
-    );
-  };
-
-  const goToToday = () => {
+  const goToThisWeek = () => {
     const today = new Date();
-    setCurrentDate(today);
+    setAnchorDate(today);
     setSelectedDate(today);
   };
 
@@ -90,29 +72,29 @@ function App() {
           <div className="md:col-span-2">
             <div className="mb-4 flex gap-2 justify-center">
               <button
-                onClick={goToPreviousMonth}
+                onClick={goToPreviousWeek}
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
               >
-                ← 前月
+                ← 前の週
               </button>
               <button
-                onClick={goToToday}
+                onClick={goToThisWeek}
                 className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
               >
-                今月
+                今週
               </button>
               <button
-                onClick={goToNextMonth}
+                onClick={goToNextWeek}
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
               >
-                翌月 →
+                次の週 →
               </button>
             </div>
             <Calendar
               data={data}
-              currentDate={currentDate}
+              anchorDate={anchorDate}
               selectedDate={selectedDate}
-              onDateSelect={handleDateSelect}
+              onDateSelect={setSelectedDate}
             />
           </div>
 

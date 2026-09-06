@@ -1,50 +1,37 @@
 import { useMemo } from "react";
-import { buildCalendarDays } from "../calendar";
+import { buildTwoWeekDays, formatDateRange } from "../calendar";
 import { dateToKey, getDayOfWeek, SCHEDULE } from "../types";
 import type { MedicationData } from "../types";
 
 interface CalendarProps {
   data: MedicationData;
-  currentDate: Date;
+  anchorDate: Date;
   selectedDate: Date;
   onDateSelect: (date: Date) => void;
 }
 
 export function Calendar({
   data,
-  currentDate,
+  anchorDate,
   selectedDate,
   onDateSelect,
 }: CalendarProps) {
-  const daysInMonth = useMemo(
-    () => buildCalendarDays(currentDate),
-    [currentDate],
-  );
+  const days = useMemo(() => buildTwoWeekDays(anchorDate), [anchorDate]);
 
-  const isToday = (date: Date) => {
-    const today = new Date();
-    return (
-      date.getFullYear() === today.getFullYear() &&
-      date.getMonth() === today.getMonth() &&
-      date.getDate() === today.getDate()
-    );
-  };
+  const isToday = (date: Date) => dateToKey(date) === dateToKey(new Date());
 
   const renderMedicationStatus = (date: Date) => {
-    const dayOfWeek = getDayOfWeek(date);
-    const schedule = SCHEDULE[dayOfWeek as keyof typeof SCHEDULE];
-    const dateKey = dateToKey(date);
-    const recordedData = data[dateKey];
+    const schedule = SCHEDULE[getDayOfWeek(date) as keyof typeof SCHEDULE];
+    const recordedData = data[dateToKey(date)];
 
     const statuses = [];
 
     if (schedule.morning) {
-      const isTaken = recordedData?.morning;
       statuses.push(
         <span
           key="morning"
           className={`inline-block w-2 h-2 rounded-full ${
-            isTaken ? "bg-green-500" : "bg-gray-300"
+            recordedData?.morning ? "bg-green-500" : "bg-gray-300"
           }`}
           title="朝食後"
         />,
@@ -52,12 +39,11 @@ export function Calendar({
     }
 
     if (schedule.evening) {
-      const isTaken = recordedData?.evening;
       statuses.push(
         <span
           key="evening"
           className={`inline-block w-2 h-2 rounded-full ${
-            isTaken ? "bg-green-500" : "bg-gray-300"
+            recordedData?.evening ? "bg-green-500" : "bg-gray-300"
           }`}
           title="夕食後"
         />,
@@ -74,40 +60,34 @@ export function Calendar({
       {/* ヘッダー */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold">
-          {currentDate.getFullYear()}年 {currentDate.getMonth() + 1}月
+          {formatDateRange(days[0], days[13])}
         </h2>
       </div>
 
       {/* 曜日ヘッダー */}
       <div className="grid grid-cols-7 gap-2 mb-2">
         {["日", "月", "火", "水", "木", "金", "土"].map((day) => (
-          <div
-            key={day}
-            className="text-center font-semibold text-gray-600 p-2"
-          >
+          <div key={day} className="text-center font-semibold text-gray-600 p-2">
             {day}
           </div>
         ))}
       </div>
 
-      {/* カレンダー本体 */}
+      {/* カレンダー本体（先週・今週の 2 行） */}
       <div className="grid grid-cols-7 gap-2">
-        {daysInMonth.map((dayObj, index) => {
-          const { date, isCurrentMonth } = dayObj;
+        {days.map((date) => {
           const isSelectedDate = dateToKey(date) === dateToKey(selectedDate);
 
           return (
             <button
-              key={index}
+              key={dateToKey(date)}
               onClick={() => onDateSelect(date)}
               className={`aspect-square p-2 rounded-lg text-sm font-medium transition-colors ${
-                !isCurrentMonth
-                  ? "bg-gray-100 text-gray-400 hover:bg-gray-200"
-                  : isToday(date)
-                    ? "bg-blue-500 text-white hover:bg-blue-600"
-                    : isSelectedDate
-                      ? "bg-blue-200 text-blue-900"
-                      : "bg-gray-50 text-gray-900 hover:bg-gray-100"
+                isToday(date)
+                  ? "bg-blue-500 text-white hover:bg-blue-600"
+                  : isSelectedDate
+                    ? "bg-blue-200 text-blue-900"
+                    : "bg-gray-50 text-gray-900 hover:bg-gray-100"
               }`}
             >
               <div>{date.getDate()}</div>
