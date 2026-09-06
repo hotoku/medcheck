@@ -49,23 +49,18 @@
 
 ## C. 後片付け（動作には影響なし）
 
-- [ ] **C-1. 未使用ファイルの削除**
-  - 参照 0 件のテンプレート残骸:
-    - `src/App.css`
-    - `src/assets/hero.png`
-    - `src/assets/react.svg`
-    - `src/assets/vite.svg`
-    - `public/icons.svg`
-  - ※ `public/favicon.svg` のみ `index.html` から参照あり。残すこと。
+- [x] **C-1. 未使用ファイルの削除**（完了: 2026-09-03 / `3864092`）
+  - 上記5ファイルを削除し、空になった `src/assets/` もディレクトリごと削除した。
+  - `public/favicon.svg` は参照があるため残したが、中身が Vite テンプレートの
+    紫の稲妻だったため薬アイコンに差し替えた（9522 → 345 バイト）。
 
-- [ ] **C-2. types.ts の未使用エクスポート**
-  - `getDayName`、`keyToDate`、`TIMING_LABELS` が定義のみで `src` 内のどこからも使われていない。
+- [x] **C-2. types.ts の未使用エクスポート**（完了: 2026-09-03 / `3864092`）
+  - `getDayName`、`keyToDate`、`TIMING_LABELS` を削除した。
 
-- [ ] **C-3. README がテンプレートのまま**
-  - Vite の雛形の内容で、medcheck について何も書かれていない。
+- [x] **C-3. README がテンプレートのまま**（完了: 2026-09-03 / `3864092`）
+  - 使い方・服薬スケジュール・localStorage の保存形式・コマンドを書いた。
 
-- [ ] **C-4. `index.html` の `lang="en"`**
-  - 日本語アプリなので `ja` が正しい。
+- [x] **C-4. `index.html` の `lang="en"`**（完了: 2026-09-03 / `3864092`）
 
 ---
 
@@ -87,7 +82,7 @@
 
 ## 着手順の案
 
-`C` の一括掃除 → `B` の仕様検討
+`A-4` → `B` の仕様検討 → `D-2`（テスト）
 
 ---
 
