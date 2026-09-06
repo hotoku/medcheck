@@ -1,42 +1,47 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Calendar } from "./components/Calendar";
 import { MedicationRecord } from "./components/MedicationRecord";
 import type { MedicationData } from "./types";
 
+const STORAGE_KEY = "medicationData";
+
+// 初期データの読み込み。読めなかった場合は空で始めるが、保存済みの値は
+// 書き換えずに残す（壊れたデータを手で復旧できる余地を残すため）。
+function loadData(): MedicationData {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (!stored) return {};
+  try {
+    return JSON.parse(stored);
+  } catch (error) {
+    console.error("Failed to load data from localStorage:", error);
+    return {};
+  }
+}
+
+function saveData(data: MedicationData) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
 function App() {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [data, setData] = useState<MedicationData>({});
+  const [data, setData] = useState<MedicationData>(loadData);
 
-  // ローカルストレージから初期化
-  useEffect(() => {
-    const stored = localStorage.getItem("medicationData");
-    if (stored) {
-      try {
-        setData(JSON.parse(stored));
-      } catch (error) {
-        console.error("Failed to load data from localStorage:", error);
-      }
-    }
-  }, []);
-
-  // データ変更時にローカルストレージに保存
-  useEffect(() => {
-    localStorage.setItem("medicationData", JSON.stringify(data));
-  }, [data]);
-
+  // 記録の更新時にだけ保存する。マウント時には書き込まない。
   const handleRecordChange = (
     dateKey: string,
     timing: "morning" | "evening",
     taken: boolean,
   ) => {
-    setData((prev) => ({
-      ...prev,
+    const next: MedicationData = {
+      ...data,
       [dateKey]: {
-        ...(prev[dateKey] || {}),
+        ...(data[dateKey] || {}),
         [timing]: taken,
       },
-    }));
+    };
+    setData(next);
+    saveData(next);
   };
 
   const goToPreviousMonth = () => {
