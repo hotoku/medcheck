@@ -3,7 +3,7 @@ export const SCHEDULE = {
   1: { morning: true, evening: true }, // 月曜: 朝・夜
   2: { morning: true, evening: false }, // 火曜: 朝のみ
   3: { morning: false, evening: false }, // 水曜: なし
-  4: { morning: false, evening: false }, // 木曜: なし
+  4: { morning: true, evening: false }, // 木曜: 朝のみ
   5: { morning: false, evening: false }, // 金曜: なし
   6: { morning: false, evening: false }, // 土曜: なし
   0: { morning: false, evening: false }, // 日曜: なし
