@@ -85,6 +85,19 @@
   - jsdom は入れておらず、コンポーネントのレンダリングテストは未着手。
     必要になったら `jsdom` と `@testing-library/react` を足す。
 
+- [ ] **D-4. GitHub Actions が Node.js 20 廃止の警告を出している**
+  - `.github/workflows/deploy.yml` の実行時に次の警告が出る:
+    「Node.js 20 is deprecated. The following actions target Node.js 20 but are being
+    forced to run on Node.js 24」
+  - 対象は `actions/checkout@v4`、`actions/setup-node@v4`、`actions/configure-pages@v5`、
+    および `actions/upload-pages-artifact@v3` が内部で使う `actions/upload-artifact@v4`。
+  - **現時点では Node 24 で強制実行されて正常に動いており、デプロイは成功している。**
+    急ぎではないが、いずれ強制実行が止まると壊れる。
+  - 対応: 各アクションを Node 24 対応版に上げる。着手時に最新のメジャーバージョンを
+    確認すること（バージョン番号をここに書いても陳腐化するため書かない）。
+  - `upload-pages-artifact` は内部で `upload-artifact` を呼ぶため、こちらを上げるだけでは
+    警告が消えない可能性がある。実際に走らせて確認する。
+
 - [x] **D-3. 潜在的なタイムゾーン依存**（完了: 2026-09-03 / `a668a03`）
   - 該当箇所は `keyToDate()`（C-2 で削除）と統計パネル（B-1/B-2 で削除）の 2 つだけで、
     どちらも消えたため問題が実在しなくなった。
@@ -96,7 +109,7 @@
 
 ## 着手順の案
 
-`B-5`（飲み忘れの通知）を検討する。`A-4` / `B-3` は優先度低。
+`B-5`（飲み忘れの通知）をまず実装ゼロで試す。`A-4` / `B-3` / `D-4` は優先度低。
 
 ---
 
