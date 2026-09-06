@@ -1,75 +1,66 @@
-# React + TypeScript + Vite
+# medcheck
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+持病の服薬記録をつけるためのシングルページアプリ。
 
-Currently, two official plugins are available:
+カレンダーから日付を選んで「朝食後」「夕食後」の服用を記録する。バックエンドは無く、
+記録はブラウザの localStorage にのみ保存される。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 使い方
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
+npm run dev      # http://localhost:5173/
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+- カレンダーの日をクリックすると、右側にその日の記録UIが出る。
+- 服用予定のある日にはドットが表示される（緑 = 記録済み / グレー = 未記録）。
+- 前月・翌月のグレーのセルをクリックすると、その月に移動する。
+- 「今月」ボタンで今日に戻る。
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 服薬スケジュール
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+曜日ごとの服用タイミングは `src/types.ts` の `SCHEDULE` で定義している。
+現在の設定は次の通り。
 
+| 曜日 | 朝食後 | 夕食後 |
+| --- | :---: | :---: |
+| 月 | ○ | ○ |
+| 火 | ○ | |
+| 水〜日 | | |
+
+服用予定の無い日は記録UIに「本日は薬を飲む必要がありません」と表示される。
+スケジュールを変えるときは `SCHEDULE` だけを書き換えればよく、カレンダーのドットも
+記録UIのボタンも統計もそれに追従する。
+
+## データの保存先
+
+localStorage のキー `medicationData` に、次の形の JSON で保存される。
+
+```json
+{
+  "2026-09-01": { "morning": true, "evening": false },
+  "2026-09-02": { "morning": true }
+}
 ```
+
+**ブラウザのデータを消すと記録も消える。** エクスポート機能は未実装（TASKS.md B-4）。
+
+## コマンド
+
+```bash
+npm run dev      # 開発サーバ
+npm run build    # 型チェック込みのビルド（tsc -b && vite build）
+npm run lint     # eslint
+npm run preview  # ビルド成果物の確認
+```
+
+テストは未導入（TASKS.md D-2）。
+
+## 技術スタック
+
+React 19 / TypeScript / Vite 8 / Tailwind CSS v4
+
+## その他
+
+- 未対応の課題は [TASKS.md](TASKS.md) で管理している。
+- 開発時の約束事は [CLAUDE.md](CLAUDE.md) に書いてある。

@@ -9,12 +9,6 @@ export const SCHEDULE = {
   0: { morning: false, evening: false }, // 日曜: なし
 };
 
-// スケジュールのラベル
-export const TIMING_LABELS = {
-  morning: "朝食後",
-  evening: "夕食後",
-};
-
 // 日付キーの型
 export type DateKey = string; // "2026-09-02"
 
@@ -35,15 +29,4 @@ export function dateToKey(date: Date): DateKey {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
-}
-
-// キーを日付に変換
-export function keyToDate(key: DateKey): Date {
-  return new Date(key);
-}
-
-// 曜日名を取得
-export function getDayName(dayOfWeek: number): string {
-  const names = ["日", "月", "火", "水", "木", "金", "土"];
-  return names[dayOfWeek];
 }
