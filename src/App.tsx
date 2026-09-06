@@ -128,59 +128,6 @@ function App() {
           </div>
         </div>
 
-        {/* 統計情報 */}
-        <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-bold mb-4">📊 今月の統計</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {(() => {
-              const currentMonthData = Object.entries(data).filter((entry) => {
-                const [key] = entry;
-                const date = new Date(key);
-                return (
-                  date.getMonth() === currentDate.getMonth() &&
-                  date.getFullYear() === currentDate.getFullYear()
-                );
-              });
-
-              const morningTaken = currentMonthData.filter(
-                (entry) => entry[1].morning,
-              ).length;
-              const eveningTaken = currentMonthData.filter(
-                (entry) => entry[1].evening,
-              ).length;
-
-              return (
-                <>
-                  <div>
-                    <p className="text-gray-600 text-sm">朝食後記録</p>
-                    <p className="text-2xl font-bold text-green-500">
-                      {morningTaken}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600 text-sm">夕食後記録</p>
-                    <p className="text-2xl font-bold text-green-500">
-                      {eveningTaken}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600 text-sm">総記録数</p>
-                    <p className="text-2xl font-bold text-blue-500">
-                      {currentMonthData.length}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600 text-sm">データ件数</p>
-                    <p className="text-2xl font-bold text-indigo-500">
-                      {Object.keys(data).length}
-                    </p>
-                  </div>
-                </>
-              );
-            })()}
-          </div>
-        </div>
-
         {/* フッター */}
         <div className="mt-8 text-center text-gray-600 text-sm">
           <p>💾 全データはブラウザのローカルストレージに保存されます</p>
