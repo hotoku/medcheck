@@ -72,6 +72,7 @@ git switch main
 git switch -c fix/a-1-selected-date-highlight   # ブランチ名は下記の規則で
 # ... 作業 ...
 npm run build && npm run lint                    # 通してからコミット
+npm run dev                                      # ブランチ上で動作確認（マージ前に必須）
 git switch main
 git merge --no-ff fix/a-1-selected-date-highlight
 git branch -d fix/a-1-selected-date-highlight
@@ -81,6 +82,13 @@ git branch -d fix/a-1-selected-date-highlight
   例: `fix/a-1-selected-date-highlight`、`chore/c-1-remove-unused-files`。
   種別は `fix` / `feat` / `chore` / `docs`。TASKS.md に無い作業は課題IDを省いてよい。
 - **1 ブランチ 1 課題**。複数の課題をまとめない。
+- **マージ前に、そのブランチ上で開発サーバを起動してブラウザで動作確認する。**
+  `npm run build` と `npm run lint` が通っただけではマージしない。
+  - この環境にはヘッドレスブラウザが入っていないため、**Claude は描画結果を見られない**。
+    Claude は `npm run dev` を起動したうえで「どこを見てほしいか」を具体的に伝え、
+    **ユーザーの確認を待ってからマージする**。自己判断でマージを進めない。
+  - HTTP レスポンスやビルドの成否は Claude 側で確認できるので、そこまでは先に潰しておく。
+  - 画面に影響しない変更（CLAUDE.md / TASKS.md / README.md などドキュメントのみ）は対象外。
 - **マージは `--no-ff`** で行い、トピックブランチの単位を履歴に残す。マージ後はブランチを削除する。
 - TASKS.md の更新も同じブランチに含める。完了記録にはコミットハッシュを書くため、
   修正をコミットした後に TASKS.md を更新する 2 コミット構成になる。
