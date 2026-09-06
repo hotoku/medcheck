@@ -49,13 +49,13 @@ localStorage のキー `medicationData` に、次の形の JSON で保存され�
 ## コマンド
 
 ```bash
-npm run dev      # 開発サーバ
-npm run build    # 型チェック込みのビルド（tsc -b && vite build）
-npm run lint     # eslint
-npm run preview  # ビルド成果物の確認
+npm run dev        # 開発サーバ
+npm run build      # 型チェック込みのビルド（tsc -b && vite build）
+npm run lint       # eslint
+npm test           # テスト実行（Vitest）
+npm run test:watch # テストの監視モード
+npm run preview    # ビルド成果物の確認
 ```
-
-テストは未導入（TASKS.md D-2）。
 
 ## 技術スタック
 

@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { buildCalendarDays } from "../calendar";
 import { dateToKey, getDayOfWeek, SCHEDULE } from "../types";
 import type { MedicationData } from "../types";
 
@@ -15,43 +16,10 @@ export function Calendar({
   selectedDate,
   onDateSelect,
 }: CalendarProps) {
-  // 当月の日付を生成
-  const daysInMonth = useMemo(() => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const days = [];
-
-    // 前月の埋め合わせ
-    const startDayOfWeek = firstDay.getDay();
-    const prevMonthLastDay = new Date(year, month, 0).getDate();
-    for (let i = startDayOfWeek - 1; i >= 0; i--) {
-      days.push({
-        date: new Date(year, month - 1, prevMonthLastDay - i),
-        isCurrentMonth: false,
-      });
-    }
-
-    // 当月
-    for (let day = 1; day <= lastDay.getDate(); day++) {
-      days.push({
-        date: new Date(year, month, day),
-        isCurrentMonth: true,
-      });
-    }
-
-    // 翌月の埋め合わせ
-    const remainingDays = 42 - days.length; // 6週分
-    for (let day = 1; day <= remainingDays; day++) {
-      days.push({
-        date: new Date(year, month + 1, day),
-        isCurrentMonth: false,
-      });
-    }
-
-    return days;
-  }, [currentDate]);
+  const daysInMonth = useMemo(
+    () => buildCalendarDays(currentDate),
+    [currentDate],
+  );
 
   const isToday = (date: Date) => {
     const today = new Date();
