@@ -6,11 +6,8 @@
 
 ## A. バグ（動作がおかしい）
 
-- [ ] **A-1. 選択日のハイライトが機能しない**
-  - 場所: `src/components/Calendar.tsx:123`
-  - `isSelectedDate` を `currentDate`（表示中の月）と比較している。実際の選択日 `selectedDate` は `App` が保持したまま `Calendar` に渡されていない。
-  - 症状: 日をクリックすると右側の記録UIは切り替わるのに、カレンダー側が青くならない。
-  - 対応: `selectedDate` を `Calendar` の props に追加する。
+- [x] **A-1. 選択日のハイライトが機能しない**（完了: 2026-09-03 / `3fe7462`）
+  - `selectedDate` を `Calendar` の props に追加し、比較対象を `currentDate` から差し替えた。
 
 - [ ] **A-2. 前月・翌月のセルがクリックできてしまう**
   - 場所: `src/components/Calendar.tsx:126-128`
@@ -23,6 +20,9 @@
   - 読み込みの `useEffect` と保存の `useEffect` が両方マウント時に走り、保存側が `data = {}` の状態で一度 `"{}"` を書き込む。
   - 通常は直後に正しい値で上書きされるため実害は出ないが、`JSON.parse` が失敗した場合に復旧できたかもしれないデータが `{}` で潰される。
   - 対応: `useState` の初期化関数でロードする、または保存側に初回スキップを入れる。
+  - **`npm run lint` がこの箇所で失敗する**（`react-hooks/set-state-in-effect`:
+    "Avoid calling setState() directly within an effect"）。現状 lint はグリーンでは
+    ないため、この課題を直すまで lint の結果は「既存1件」を差し引いて見る必要がある。
 
 - [ ] **A-4. localStorage の中身を検証していない**
   - 場所: `src/App.tsx:17`
@@ -91,7 +91,7 @@
 
 ## 着手順の案
 
-`A-1`, `A-2` → `A-3` → `C` の一括掃除
+`A-2` → `A-3` → `C` の一括掃除
 
 ---
 
