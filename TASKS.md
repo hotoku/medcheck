@@ -15,14 +15,11 @@
   - 症状: 9月表示中に「8/31」を押すと記録UIだけ8月の日付に切り替わり、カレンダーは9月のままで不整合になる。
   - 対応: `disabled` を付けるか、クリックで該当月へ移動させるか要判断。
 
-- [ ] **A-3. 起動直後に localStorage を空で上書きする危険**
-  - 場所: `src/App.tsx:12-27`
-  - 読み込みの `useEffect` と保存の `useEffect` が両方マウント時に走り、保存側が `data = {}` の状態で一度 `"{}"` を書き込む。
-  - 通常は直後に正しい値で上書きされるため実害は出ないが、`JSON.parse` が失敗した場合に復旧できたかもしれないデータが `{}` で潰される。
-  - 対応: `useState` の初期化関数でロードする、または保存側に初回スキップを入れる。
-  - **`npm run lint` がこの箇所で失敗する**（`react-hooks/set-state-in-effect`:
-    "Avoid calling setState() directly within an effect"）。現状 lint はグリーンでは
-    ないため、この課題を直すまで lint の結果は「既存1件」を差し引いて見る必要がある。
+- [x] **A-3. 起動直後に localStorage を空で上書きする危険**（完了: 2026-09-03 / `dd6fa4f`）
+  - 読み込みを `useState` の初期化関数に移し、保存は `handleRecordChange` の中でのみ
+    行うようにしてマウント時の書き込みを無くした。
+  - あわせて `react-hooks/set-state-in-effect` の lint エラーが解消し、
+    **`npm run lint` はグリーンになった**。
 
 - [ ] **A-4. localStorage の中身を検証していない**
   - 場所: `src/App.tsx:17`
@@ -91,7 +88,7 @@
 
 ## 着手順の案
 
-`A-2` → `A-3` → `C` の一括掃除
+`A-2` → `C` の一括掃除
 
 ---
 
