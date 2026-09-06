@@ -95,6 +95,7 @@ function App() {
             <Calendar
               data={data}
               currentDate={currentDate}
+              selectedDate={selectedDate}
               onDateSelect={setSelectedDate}
             />
           </div>

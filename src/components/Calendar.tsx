@@ -5,10 +5,16 @@ import type { MedicationData } from "../types";
 interface CalendarProps {
   data: MedicationData;
   currentDate: Date;
+  selectedDate: Date;
   onDateSelect: (date: Date) => void;
 }
 
-export function Calendar({ data, currentDate, onDateSelect }: CalendarProps) {
+export function Calendar({
+  data,
+  currentDate,
+  selectedDate,
+  onDateSelect,
+}: CalendarProps) {
   // 当月の日付を生成
   const daysInMonth = useMemo(() => {
     const year = currentDate.getFullYear();
@@ -120,7 +126,7 @@ export function Calendar({ data, currentDate, onDateSelect }: CalendarProps) {
       <div className="grid grid-cols-7 gap-2">
         {daysInMonth.map((dayObj, index) => {
           const { date, isCurrentMonth } = dayObj;
-          const isSelectedDate = dateToKey(date) === dateToKey(currentDate);
+          const isSelectedDate = dateToKey(date) === dateToKey(selectedDate);
 
           return (
             <button
