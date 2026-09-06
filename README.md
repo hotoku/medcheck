@@ -2,6 +2,8 @@
 
 持病の服薬記録をつけるためのシングルページアプリ。
 
+**公開URL: <https://www.hotoku.info/medcheck/>**
+
 カレンダーから日付を選んで「朝食後」「夕食後」の服用を記録する。バックエンドは無く、
 記録はブラウザの localStorage にのみ保存される。
 
@@ -60,6 +62,11 @@ npm run preview    # ビルド成果物の確認
 ## 技術スタック
 
 React 19 / TypeScript / Vite 8 / Tailwind CSS v4
+
+## デプロイ
+
+`main` に push すると GitHub Actions（`.github/workflows/deploy.yml`）が
+lint とテストを通してから GitHub Pages にデプロイする。
 
 ## その他
 
