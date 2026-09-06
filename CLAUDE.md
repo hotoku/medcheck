@@ -24,7 +24,7 @@ npx vitest run -t "閏年"                    # テスト名で絞り込み
 
 **テストは Vitest**。`src/*.test.ts` に置く。DOM を使わない純粋関数だけを対象に
 しているので jsdom は入れていない。**コンポーネントから計算ロジックを取り出して
-テストする方針**（`buildCalendarDays` がその例）。
+テストする方針**（`src/calendar.ts` の日付計算がその例）。
 
 ## 課題管理は TASKS.md で行う
 
@@ -39,27 +39,36 @@ npx vitest run -t "閏年"                    # テスト名で絞り込み
 
 コンポーネントは 3 つだけで、状態は `src/App.tsx` が一手に持つ。
 `Calendar` と `MedicationRecord` は props を受け取るだけの表示コンポーネント。
-カレンダーのマス目を組み立てる `buildCalendarDays()` は `src/calendar.ts` の
-純粋関数に切り出してある（テストのため）。
+日付計算は `src/calendar.ts` の純粋関数に切り出してある（テストのため）。
+`startOfWeek()` / `addDays()` / `buildTwoWeekDays()` / `formatDateRange()`。
 
-**日付の状態が 2 つあり、役割が違う** — ここの取り違えが既知バグの原因になっている:
+**カレンダーは月ではなく 2 週間を表示する**。`buildTwoWeekDays(anchorDate)` が
+「基準日を含む週」と「その前の週」の 14 日分を日曜始まりで返す。用途が
+「直近の飲み忘れを防ぐこと」なので 1 ヶ月分は要らない、という判断。
 
-- `currentDate` … カレンダーが表示している「月」。前月/翌月ボタンが動かす。
+**日付の状態が 2 つあり、役割が違う** — ここの取り違えが過去のバグの原因になっている:
+
+- `anchorDate` … 表示している 2 週間の基準日。前の週/次の週ボタンが 7 日ずつ動かす。
 - `selectedDate` … 右側の記録UIが対象にしている「日」。日セルのクリックが動かす。
 
+週を移動しても選択日は追従しない（意図した挙動）。
+
 **データ形状** — `MedicationData = Record<"YYYY-MM-DD", { morning?: boolean; evening?: boolean }>`。
-localStorage のキーは `"medicationData"`。`App.tsx` の `useEffect` が `data` 全体を
-毎回書き戻す方式。
+localStorage のキーは `"medicationData"`（`App.tsx` の `STORAGE_KEY`）。
+**読み込みは `useState` の初期化関数、保存は `handleRecordChange` の中だけ**で行う。
+マウント時には書き込まない — `useEffect` で保存すると、起動しただけで既存データを
+`{}` で潰す経路ができる（TASKS.md A-3）。`useEffect` に戻さないこと。
 
 **`SCHEDULE`（`src/types.ts`）が曜日 → 服用タイミングの唯一の定義**。
-カレンダーのドット表示も、記録UIに出るボタンも、統計の対象も、すべてここを参照して
-決まる。服薬スケジュールを変えるときはこの 1 箇所だけを触れば全体が連動する。
+カレンダーのドット表示も、記録UIに出るボタンも、すべてここを参照して決まる。
+服薬スケジュールを変えるときはこの 1 箇所だけを触れば全体が連動する。
 
 **日付はすべてローカルタイムで扱う**。`dateToKey()` がローカルタイムでキー文字列を
 組み立て、`Date` の生成は引数なしか数値引数（`new Date(year, month, day)`）のみ。
 **日付キーを `new Date(key)` で読み戻さないこと** — 文字列の `"YYYY-MM-DD"` は UTC 深夜
 として解釈されるため、この非対称性を持ち込むとタイムゾーンによって 1 日ずれる。
-以前は統計パネルと `keyToDate()` がこれをやっていたが、どちらも削除済み。
+以前は統計パネルと `keyToDate()` がこれをやっていたが、どちらも削除済み
+（TASKS.md D-3）。
 
 ## 踏みやすい罠
 
