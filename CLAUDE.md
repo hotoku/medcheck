@@ -11,13 +11,20 @@ UI 文言・コミットメッセージ・TASKS.md はすべて日本語。
 ## コマンド
 
 ```bash
-npm run dev      # 開発サーバ (http://localhost:5173/)
-npm run build    # tsc -b && vite build ... 型チェック込み
-npm run lint     # eslint
-npm run preview  # ビルド成果物の確認
+npm run dev        # 開発サーバ (http://localhost:5173/)
+npm run build      # tsc -b && vite build ... 型チェック込み
+npm run lint       # eslint
+npm test           # vitest run ... 1 回実行
+npm run test:watch # vitest ... 監視モード
+npm run preview    # ビルド成果物の確認
+
+npx vitest run src/calendar.test.ts        # ファイル単位
+npx vitest run -t "閏年"                    # テスト名で絞り込み
 ```
 
-テストフレームワークは未導入（TASKS.md の D-2）。
+**テストは Vitest**。`src/*.test.ts` に置く。DOM を使わない純粋関数だけを対象に
+しているので jsdom は入れていない。**コンポーネントから計算ロジックを取り出して
+テストする方針**（`buildCalendarDays` がその例）。
 
 ## 課題管理は TASKS.md で行う
 
@@ -32,6 +39,8 @@ npm run preview  # ビルド成果物の確認
 
 コンポーネントは 3 つだけで、状態は `src/App.tsx` が一手に持つ。
 `Calendar` と `MedicationRecord` は props を受け取るだけの表示コンポーネント。
+カレンダーのマス目を組み立てる `buildCalendarDays()` は `src/calendar.ts` の
+純粋関数に切り出してある（テストのため）。
 
 **日付の状態が 2 つあり、役割が違う** — ここの取り違えが既知バグの原因になっている:
 
