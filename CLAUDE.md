@@ -104,4 +104,20 @@ git branch -d fix/a-1-selected-date-highlight
 - TASKS.md の更新も同じブランチに含める。完了記録にはコミットハッシュを書くため、
   修正をコミットした後に TASKS.md を更新する 2 コミット構成になる。
 - コミットメッセージは日本語で書く。
-- リモートは未設定。将来 GitHub に置く場合はこのフローが PR ベースに変わる。
+- リモートは `origin`（github.com:hotoku/medcheck、public）。SSH で push する。
+
+### デプロイ
+
+**`main` に push すると GitHub Actions が動き、GitHub Pages に自動デプロイされる。**
+ローカルでマージしただけでは公開されない。マージ後の `git push` までが 1 作業。
+
+- 公開URL: <https://www.hotoku.info/medcheck/>
+  （`hotoku.github.io` ではない。アカウントにカスタムドメイン `hotoku.info` が
+  設定済みで、プロジェクトページがそれを継承している）
+- ワークフローは `.github/workflows/deploy.yml`。
+  `npm ci` → `npm run lint` → `npm test` → `npm run build` を通してからデプロイする。
+  **lint かテストが落ちたらデプロイされない**ので、push 前にローカルで通しておく。
+- `vite.config.ts` の `base` は `'./'`（相対パス）。Pages はサブパス `/medcheck/` で
+  配信されるため。**絶対パスに変えないこと** — 開発サーバ・`vite preview`・Pages の
+  3 つで配信パスが違うので、相対パスが唯一すべてで動く。
+- `https_enforced` は false。`http://` からのリダイレクトは無い。
