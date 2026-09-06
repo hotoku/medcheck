@@ -96,6 +96,8 @@ npm run dev                                      # ブランチ上で動作確�
 git switch main
 git merge --no-ff fix/a-1-selected-date-highlight
 git branch -d fix/a-1-selected-date-highlight
+# ここで「push してよいか」をユーザーに確認する
+git push origin main
 ```
 
 - **ブランチ名**: `<種別>/<課題ID>-<英小文字の短い説明>`
@@ -119,6 +121,13 @@ git branch -d fix/a-1-selected-date-highlight
 
 **`main` に push すると GitHub Actions が動き、GitHub Pages に自動デプロイされる。**
 ローカルでマージしただけでは公開されない。マージ後の `git push` までが 1 作業。
+
+**`git push` の前に必ずユーザーに確認する。自己判断で push しない。**
+push はそのまま公開を意味するため、マージの確認とは別に承認を取る。
+マージとブランチ削除まで済ませ、ローカルのチェック（build / lint / test）を
+通したうえで「push してよいか」を尋ね、**返事を待ってから push する**。
+ドキュメントのみの変更でもこの確認は省かない（マージ前の動作確認とは違い、
+こちらに対象外は無い）。
 
 - 公開URL: <https://www.hotoku.info/medcheck/>
   （`hotoku.github.io` ではない。アカウントにカスタムドメイン `hotoku.info` が
