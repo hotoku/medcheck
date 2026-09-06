@@ -44,6 +44,17 @@ function App() {
     saveData(next);
   };
 
+  // 表示中の月以外の日が選ばれたら、その月に移動する
+  const handleDateSelect = (date: Date) => {
+    setSelectedDate(date);
+    if (
+      date.getFullYear() !== currentDate.getFullYear() ||
+      date.getMonth() !== currentDate.getMonth()
+    ) {
+      setCurrentDate(new Date(date.getFullYear(), date.getMonth()));
+    }
+  };
+
   const goToPreviousMonth = () => {
     setCurrentDate(
       new Date(currentDate.getFullYear(), currentDate.getMonth() - 1),
@@ -101,7 +112,7 @@ function App() {
               data={data}
               currentDate={currentDate}
               selectedDate={selectedDate}
-              onDateSelect={setSelectedDate}
+              onDateSelect={handleDateSelect}
             />
           </div>
 

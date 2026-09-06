@@ -134,7 +134,7 @@ export function Calendar({
               onClick={() => onDateSelect(date)}
               className={`aspect-square p-2 rounded-lg text-sm font-medium transition-colors ${
                 !isCurrentMonth
-                  ? "bg-gray-100 text-gray-400 cursor-default"
+                  ? "bg-gray-100 text-gray-400 hover:bg-gray-200"
                   : isToday(date)
                     ? "bg-blue-500 text-white hover:bg-blue-600"
                     : isSelectedDate
@@ -143,7 +143,7 @@ export function Calendar({
               }`}
             >
               <div>{date.getDate()}</div>
-              {isCurrentMonth && renderMedicationStatus(date)}
+              {renderMedicationStatus(date)}
             </button>
           );
         })}
